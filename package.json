@@ -1,0 +1,19 @@
+{
+  "name": "amadeus_server",
+  "version": "1.0.0",
+  "description": "Backend service for the Amadeus project. SMS will be sent from Android phone, to Twilio phone number. Twilio will then send these messages to a Slack channel. Upon a reply from the Slack channel, Twilio will send an SMS back to the Android phone. The Android phone will then parse the text (which will contain information regarding the original sender, as well as the message body) and create a new SMS which it will send to the original sender.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/nicholasjativa/Amadeus_Server.git"
+  },
+  "author": "Nicholas Daniel Jativa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicholasjativa/Amadeus_Server/issues"
+  },
+  "homepage": "https://github.com/nicholasjativa/Amadeus_Server#readme"
+}
