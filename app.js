@@ -4,28 +4,38 @@ var http = require('http');
 var twilioClient = require('./twilioClient');
 var app = express();
 var router = express.Router();
+var WebClient = require('@slack/client').WebClient;
+var slackToken = process.env.SLACK_API_TOKEN;
+var web = new WebClient(slackToken);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-twilioClient.testToAndroid();
+var msgObj = {
+        "as_user": true
+};
+web.chat.postMessage('D3WUWGPM0', 'hey', msgObj, function(err, res) {
+    if (err) console.log(err);
+    else console.log('Message sent to Slack: ' + res);
+});
+
+//twilioClient.testToAndroid();
 
 router.post('/twilio', function(req, res) {
     var jsonSmsInfo = req.body;
-    var jsonSmsBody = JSON.parse('"' + jsonSmsInfo.Body + '"');
+    var jsonSmsBody = JSON.parse(jsonSmsInfo.Body);
     transformMessageFromAndroid(jsonSmsBody);
-    res.send(400);
+    res.sendStatus(200);
 });
 
-function transformMessageFromAndroid(bareSms) {
-    var messageSender = bareSms.phoneNumber;
-    var messageBody = bareSms.body;
+function transformMessageFromAndroid(jsonSms) {
+    var messageSender = jsonSms.phoneNumber;
+    var messageBody = jsonSms.body;
     var messageForSlack = "Received message from: " + messageSender + "\nBody: " + messageBody;
     console.log(messageForSlack);
 }
 
 app.use(router);
-//twilioClient.create();
 
 app.listen(5000, function() {
-    console.log('Amadeus server listening on :8000');
+    console.log('Amadeus server listening on :5000');
 });
