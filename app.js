@@ -10,32 +10,55 @@ var web = new WebClient(slackToken);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-var msgObj = {
-        "as_user": true
-};
-web.chat.postMessage('D3WUWGPM0', 'hey', msgObj, function(err, res) {
-    if (err) console.log(err);
-    else console.log('Message sent to Slack: ' + res);
-});
 
-//twilioClient.testToAndroid();
 
-router.post('/twilio', function(req, res) {
-    var jsonSmsInfo = req.body;
-    var jsonSmsBody = JSON.parse(jsonSmsInfo.Body);
-    transformMessageFromAndroid(jsonSmsBody);
+twilioClient.testToAndroid();
+
+router.post('/twilio', function (req, res) {
+    // make sure to change Receiving SMS URL on Twilio
+    console.log('\nSuccessfully received SMS on Twilio endpoint from Android!');
+    var jsonSmsInformation = req.body;
+    var jsonSmsBody = JSON.parse(jsonSmsInformation.Body);
+    parseMessageSentFromAndroidReceivedOnTwilioEndpoint(jsonSmsBody);
     res.sendStatus(200);
 });
 
-function transformMessageFromAndroid(jsonSms) {
+function parseMessageSentFromAndroidReceivedOnTwilioEndpoint(jsonSms) {
     var messageSender = jsonSms.phoneNumber;
     var messageBody = jsonSms.body;
-    var messageForSlack = "Received message from: " + messageSender + "\nBody: " + messageBody;
-    console.log(messageForSlack);
+
+    prepareAndSendMessageFromTwilioToSlack(messageSender, messageBody);
+}
+
+function prepareAndSendMessageFromTwilioToSlack(originalSender, originalBody) {
+    var messageForSlack = '{"phoneNumber": "' + '+1'+ originalSender + '","body": "' + originalBody + '"}';
+    var msgProperties = {
+        
+    };
+
+    web.chat.postMessage('#text-channel', messageForSlack, msgProperties, function (err, res) {
+        if (err) console.log(err);
+        else console.log('Message is now being sent to Slack::\n"' + res.message.text + '"\n');
+    });
+}
+
+router.post('/slack', function(req, res) {
+    // make sure to change Outgoing Webhook URL on Slack
+    console.log('\nSuccessfully received message on Slack endpoint from #text-channel on Slack!');
+    if (req.body.token === '9Zhv8QmAk8vPw1uYolc11PZR') {
+        var message = req.body.text;
+        console.log('Message is now being sent to Twilio:: \n"' + message + '"');  
+
+        prepareAndSendMessageFromSlackToTwilio(message);
+    }
+});
+
+function prepareAndSendMessageFromSlackToTwilio() {
+
 }
 
 app.use(router);
 
-app.listen(5000, function() {
-    console.log('Amadeus server listening on :5000');
+app.listen(5000, function () {
+    console.log('Amadeus server listening on port 5000');
 });

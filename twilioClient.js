@@ -12,6 +12,7 @@ var client = new twilio.RestClient();
 }*/
 
 module.exports.testToAndroid = function () {
+    console.log('\nSending test message from Twilio to Android to trigger Amadeus..');
     client.messages.create({
         body: 'Hello, World!',
         to: '+16313360360',
