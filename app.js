@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-twilioClient.testToAndroid();
+twilioClient.sendTestToAndroid();
 
 router.post('/twilio', function (req, res) {
     // make sure to change Receiving SMS URL on Twilio
@@ -53,8 +53,8 @@ router.post('/slack', function(req, res) {
     }
 });
 
-function prepareAndSendMessageFromSlackToTwilio() {
-
+function prepareAndSendMessageFromSlackToTwilio(message) {
+    twilioClient.sendTextToTwilio(message);
 }
 
 app.use(router);
